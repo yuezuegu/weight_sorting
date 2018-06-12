@@ -57,22 +57,45 @@ def mult3dsorted(im_sorted, filt_sorted, b):
     mult_out = np.multiply(im_sorted, filt_sorted)
     
     cumsum = np.cumsum(mult_out) + b
-
-    cutoff_point = np.argmax(np.diff( (cumsum<=0).astype(int) ))
+    max_ind = np.argmax(cumsum)
+    max_val = cumsum[max_ind]
+    
+    cutoff_point = np.argmax((cumsum[max_ind:]<=0))
     
     if cutoff_point == 0:
         ws_cnt = mult_out.shape[0]
         midsum = max(cumsum[-1], 0)
     else:
-        ws_cnt = cutoff_point
+        ws_cnt = cutoff_point + max_ind
         midsum = 0
     
-    max_ind = np.argmax(cumsum)
-    max_val = cumsum[max_ind]
+    
+    
+
     
     return midsum, ws_cnt, max_ind, max_val
 
-def conv3dsorted(im, filt, b):
+def conv3d(im, filt, b):
+    lx = im.shape[0]
+    ly = im.shape[1]
+    lz = filt.shape[3]
+    
+    pad_size = int((int(filt.shape[0])-1)/2)
+    im_padded = np.pad(im, ((pad_size, pad_size), (pad_size, pad_size), (0, 0)), mode='constant', constant_values=(0, 0))
+
+    ofmap = np.zeros((lx,ly,lz))
+    
+    for f in range(lz):
+        for i in range(lx):
+            for j in range(ly):
+                ofmap[i,j,f] = np.sum(np.multiply(im_padded[i:i+filt.shape[0], j:j+filt.shape[1], :], filt[:,:,:,f])) + b[f]
+    
+    ofmap[ofmap<0] = 0
+    
+    return ofmap
+                
+                
+def conv3dsorted(im, filt, b, perc_procastinate):
     start_time = time.time()
     
     lx = im.shape[0]
@@ -84,7 +107,7 @@ def conv3dsorted(im, filt, b):
     
     ofmap = np.zeros((lx,ly,lz))
     
-    filt_ind = sortConvFilters(filt, 0)
+    filt_ind = sortConvFilters(filt, perc_procastinate)
     
     ws_cnt = 0
     mac_cnt = filt.shape[0]*filt.shape[1]*filt.shape[2]*im.shape[0]*im.shape[1]*filt.shape[3]
@@ -156,15 +179,15 @@ def sortConvFilters(filt, perc_procrastinate):
         negW_sorted = sorted(negW)
 
         s = int(len(posW_sorted) * (1-perc_procrastinate))
-        for i in posW_sorted[0:s+1]:              
+        for i in posW_sorted[0:s]:              
             filt_ind[f].append(i[1])
 
         for i in negW_sorted:              
             filt_ind[f].append(i[1])
     
-        for i in posW_sorted[s+1:]:              
+        for i in posW_sorted[s:]:              
             filt_ind[f].append(i[1])
-            
+                
     return filt_ind
 
 def max_pool(im):
@@ -190,6 +213,10 @@ def max_pool(im):
     print("--- %s seconds ---" % (time.time() - start_time))
     return out
     
+def fc(im,w,b):
+    out = np.matmul(im,  w) + b
+    out[out<0] = 0
+    return out
     
 def fcOutput(im,w,b):
     out = np.matmul(im,  w) + b
@@ -227,14 +254,15 @@ def vectormultSorted(im_sorted, w_sorted, b):
     mult = np.multiply(im_sorted, w_sorted)
     
     cumsum = np.cumsum(mult) + b
+    max_ind = np.argmax(cumsum)
     
-    cutoff_point = np.argmax(np.diff( (cumsum<=0).astype(int) ))
+    cutoff_point = np.argmax((cumsum[max_ind:]<=0))
     
     if cutoff_point == 0:
         ws_cnt = mult.shape[0]
         midsum = max(cumsum[-1], 0)
     else:
-        ws_cnt = cutoff_point
+        ws_cnt = cutoff_point + max_ind
         midsum = 0
 
     return midsum, ws_cnt

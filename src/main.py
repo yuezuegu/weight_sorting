@@ -8,6 +8,8 @@ import numpy as np
 import helpers
 import time
 
+import sys
+
 from keras.applications.vgg16 import VGG16
 from keras.applications.vgg16 import preprocess_input
 from keras.preprocessing import image
@@ -15,12 +17,14 @@ from keras import backend as K
 
 model = VGG16(weights='imagenet')
 
-im_dir = '/home/acy/Downloads/ILSVRC2012_img_val/'
+im_dir = sys.argv[1:2][0]
+no_imgs = int(sys.argv[2:3][0])
+
+img_ids, im_list = helpers.choose_subset(im_dir, no_imgs)
 
 logfile = open("log.txt","w") 
 
-no_subset = 10
-img_ids, im_list = helpers.choose_subset(im_dir, no_subset)
+perc_procastinate = 0
 
 org_top1_cnt = 0
 org_top5_cnt = 0
@@ -35,7 +39,7 @@ for i, im_name in enumerate(im_list):
     x = preprocess_input(x)
     
     pred = model.predict(x)
-        
+    
     start_time = time.time()
     
     total_mac_cnt = 0
@@ -45,25 +49,28 @@ for i, im_name in enumerate(im_list):
         logfile.write("Layer: " + layer.name+ "\n")
         logfile.flush()
         
-        f = K.function([model.input], [layer.input])
-        layer_input = f([x])[0]
-    
-        f = K.function([model.input], [layer.output])
-        layer_output = f([x])[0]
-                
-        if layer.name.__eq__("block1_conv1"):
-            next_layer_input = layer_output
+        #f = K.function([model.input], [layer.input])
+        #layer_input = f([x])[0]
+
+        #f = K.function([model.input], [layer.output])
+        #layer_output = f([x])[0]
         
+        if layer.name.__eq__("block1_conv1"):
+            #next_layer_input = layer_output
+            [weights, biases] = layer.get_weights()
+            ofmap = helpers.conv3d(x[0,:,:,:], weights, biases)
+            next_layer_input = np.expand_dims(ofmap, axis=0)
+            
         elif layer.name.__contains__("conv"):
             [weights, biases] = layer.get_weights()
             
-            ofmap, mac_cnt, ws_cnt, mp_cnt = helpers.conv3dsorted(next_layer_input[0,:,:,:], weights, biases)
+            ofmap, mac_cnt, ws_cnt, mp_cnt = helpers.conv3dsorted(next_layer_input[0,:,:,:], weights, biases, perc_procastinate)
             total_mac_cnt = total_mac_cnt + mac_cnt
             total_ws_cnt = total_ws_cnt + ws_cnt
             
-            print("Max error: ", np.max(np.abs(layer_output-ofmap)))
+            #print("Max error: ", np.max(np.abs(layer_output-ofmap)))
             print("# of mac: ", mac_cnt, " # of ws: ", ws_cnt, " , % of skipped: ", 1 - float(ws_cnt)/mac_cnt )
-            logfile.write("Max error: " + str(np.max(np.abs(layer_output-ofmap)))+ "\n")
+            #logfile.write("Max error: " + str(np.max(np.abs(layer_output-ofmap)))+ "\n")
             logfile.write("# of mac: " + str(mac_cnt) + " # of ws: " + str( ws_cnt) + " , % of skipped: " + str(1 - float(ws_cnt)/mac_cnt) + "\n")
             
             if model.layers[idx+1].name.__contains__("pool"):
@@ -86,9 +93,9 @@ for i, im_name in enumerate(im_list):
             total_mac_cnt = total_mac_cnt + mac_cnt
             total_ws_cnt = total_ws_cnt + ws_cnt
             
-            print("Max error: ", np.max(np.abs(layer_output-ofmap)))
+            #print("Max error: ", np.max(np.abs(layer_output-ofmap)))
             print("# of mac: ", mac_cnt, " # of ws: ", ws_cnt, " , % of skipped: ", 1 - float(ws_cnt)/mac_cnt )
-            logfile.write("Max error: " + str(np.max(np.abs(layer_output-ofmap))) + "\n")
+            #logfile.write("Max error: " + str(np.max(np.abs(layer_output-ofmap))) + "\n")
             logfile.write("# of mac: " + str(mac_cnt) + " # of ws: " + str( ws_cnt) + " , % of skipped: " + str(1 - float(ws_cnt)/mac_cnt) + "\n")            
             next_layer_input = np.expand_dims(ofmap, axis=0)
             
@@ -115,7 +122,7 @@ for i, im_name in enumerate(im_list):
     
     logfile.write("Top1: " + str(top1correct) + " Top5: " + str(top5correct)+ "\n")
     
-print('Original top1 accuracy: ', float(org_top1_cnt) / no_subset)
-print('Original top5 accuracy: ', float(org_top5_cnt) / no_subset)
-print('WS top1 accuracy: ', float(ws_top1_cnt) / no_subset)
-print('WS top5 accuracy: ', float(ws_top5_cnt) / no_subset)
+print('Original top1 accuracy: ', float(org_top1_cnt) / no_imgs)
+print('Original top5 accuracy: ', float(org_top5_cnt) / no_imgs)
+print('WS top1 accuracy: ', float(ws_top1_cnt) / no_imgs)
+print('WS top5 accuracy: ', float(ws_top5_cnt) / no_imgs)
