@@ -24,6 +24,7 @@ no_imgs = int(sys.argv[2:3][0])
 img_ids, im_list = helpers.choose_subset(im_dir, no_imgs)
 
 logfile = open("log.txt","w") 
+logfile_nv = open("log_noverbose.txt","w") 
 
 perc_procastinate = 0
 
@@ -76,6 +77,7 @@ for i, im_name in enumerate(im_list):
             print("# of mac: ", mac_cnt, " # of ws: ", ws_cnt, " , % of skipped: ", 1 - float(ws_cnt)/mac_cnt )
             #logfile.write("Max error: " + str(np.max(np.abs(layer_output-ofmap)))+ "\n")
             logfile.write("# of mac: " + str(mac_cnt) + " # of ws: " + str( ws_cnt) + " , % of skipped: " + str(1 - float(ws_cnt)/mac_cnt) + "\n")
+            logfile_nv.write(str(1 - float(ws_cnt)/mac_cnt) + " ")
             
             if model.layers[idx+1].name.__contains__("pool"):
                 print("% of skipped with MP:", 1 - float(mp_cnt)/mac_cnt)        
@@ -101,6 +103,8 @@ for i, im_name in enumerate(im_list):
             print("# of mac: ", mac_cnt, " # of ws: ", ws_cnt, " , % of skipped: ", 1 - float(ws_cnt)/mac_cnt )
             #logfile.write("Max error: " + str(np.max(np.abs(layer_output-ofmap))) + "\n")
             logfile.write("# of mac: " + str(mac_cnt) + " # of ws: " + str( ws_cnt) + " , % of skipped: " + str(1 - float(ws_cnt)/mac_cnt) + "\n")            
+            logfile_nv.write(str(1 - float(ws_cnt)/mac_cnt) + " ")
+            
             next_layer_input = np.expand_dims(ofmap, axis=0)
             
         elif layer.name.__eq__("predictions"):    
@@ -110,12 +114,14 @@ for i, im_name in enumerate(im_list):
     print("Max error: ", np.max(np.abs(pred-pred_ws)))   
 #     np.savetxt('pred.txt', pred, delimiter=' ') 
 #     np.savetxt('pred_ws.txt', pred_ws, delimiter=' ')
-
+    
     print("--- Total time: %s seconds ---" % (time.time() - start_time))
     logfile.write("Final max error: " +  str(np.max(np.abs(pred-pred_ws))) + "\n")
     logfile.write("Total # of mac: " + str(total_mac_cnt) + " total # of ws: " + str(total_ws_cnt) + " , total % of skipped: " +  str(1 - float(total_ws_cnt)/total_mac_cnt) + "\n")
     logfile.write("Total elapsed time: " + str(time.time() - start_time) + "\n")
-
+    
+    logfile_nv.write(str(1 - float(total_ws_cnt)/total_mac_cnt) + "\n")
+    
     top1correct, top5correct = helpers.check_accuracy(pred[0], i)
     org_top1_cnt = org_top1_cnt + top1correct
     org_top5_cnt = org_top5_cnt + top5correct
@@ -140,5 +146,3 @@ logfile.write("Original top1 accuracy: " +  str(float(org_top1_cnt) / no_imgs) +
 logfile.write("Original top5 accuracy: " +  str(float(org_top5_cnt) / no_imgs) + "\n")
 logfile.write("WS top1 accuracy: " +  str(float(ws_top1_cnt) / no_imgs) + "\n")
 logfile.write("WS top5 accuracy: " +  str(float(ws_top5_cnt) / no_imgs) + "\n")
-
-

@@ -1,8 +1,0 @@
-index: 0 image name: /home/acy/Downloads/ILSVRC2012_img_val/ILSVRC2012_val_00011842.JPEG
-Layer: input_1
-Layer: block1_conv1
-Layer: block1_conv2
-Max error: 0.0011936599880755239
-# of mac: 1849688064 # of ws: 1683034730 , % of skipped: 0.0900980750449
-Layer: block1_pool
-Layer: block2_conv1
