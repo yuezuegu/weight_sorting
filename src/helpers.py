@@ -6,12 +6,16 @@ Created on May 29, 2018
 
 import numpy as np
 import time
-import os
+import json 
+import os.path
+
+import multiprocessing
 
 def choose_subset(im_dir, no_imgs):
     np.random.seed(0)
     
     img_list = sorted(os.listdir(im_dir))
+    
     idx = np.random.permutation(len(img_list))[0:no_imgs]
     #idx = range(no_imgs)
     
@@ -26,6 +30,10 @@ def check_accuracy(prob, idx):
     synset = [l.strip() for l in open('../data/synset.txt').readlines()]
 
     gt = [i for i in open('../data/ground_truth.txt').readlines()]
+    
+    img_names = [i for i in open('../data/image_names.txt').readlines()]
+    
+    #idx = img_names.index(img_name+'\n')
     
     # print prob
     pred = np.argsort(prob)[::-1]
@@ -94,8 +102,27 @@ def conv3d(im, filt, b):
     
     return ofmap
                 
-                
-def conv3dsorted(im, filt, b, perc_procastinate):
+def conv3dkernel(args):
+    f, filt, filt_ind, b, lx, ly = args
+    global im_padded
+    
+    filt_ind_array = np.array(filt_ind)
+    
+    filt_sorted = filt[filt_ind_array[:,0], filt_ind_array[:,1], filt_ind_array[:,2]]
+    
+    ofmap_slice = np.zeros((lx,ly))
+    
+    ws_cnt = 0
+    for i in range(lx):
+        for j in range(ly):
+            im_sorted = im_padded[filt_ind_array[:,0]+i, filt_ind_array[:,1]+j, filt_ind_array[:,2]]
+            
+            ofmap_slice[i,j], ws_cnt_, _,_ = mult3dsorted(im_sorted, filt_sorted, b)
+            ws_cnt = ws_cnt + ws_cnt_
+            
+    return ofmap_slice, ws_cnt
+    
+def conv3dsorted(im, filt, b, layer_name, perc_procastinate):
     start_time = time.time()
     
     lx = im.shape[0]
@@ -103,55 +130,43 @@ def conv3dsorted(im, filt, b, perc_procastinate):
     lz = filt.shape[3]
     
     pad_size = int((int(filt.shape[0])-1)/2)
+    global im_padded
     im_padded = np.pad(im, ((pad_size, pad_size), (pad_size, pad_size), (0, 0)), mode='constant', constant_values=(0, 0))
     
     ofmap = np.zeros((lx,ly,lz))
     
-    filt_ind = sortConvFilters(filt, perc_procastinate)
+    loadSortedIndex = True
+    indexFileName = '../sorted_indexes/filt_ind_' + layer_name + '.json'
+    if loadSortedIndex and os.path.exists(indexFileName):
+        print('Loading json file')
+        with open(indexFileName, 'r') as infile:
+            filt_ind = json.load(infile)
+    else:
+        filt_ind = sortConvFilters(filt, perc_procastinate)
+        print('Writing json file')
+        with open(indexFileName, 'w') as outfile:
+            json.dump(filt_ind, outfile)
     
     ws_cnt = 0
     mac_cnt = filt.shape[0]*filt.shape[1]*filt.shape[2]*im.shape[0]*im.shape[1]*filt.shape[3]
     
     maxVals = [np.zeros((lx, ly)), np.zeros((lx, ly)), np.zeros((lx, ly))]
-    
     mp_cnt = 0
     
+    arg_list = []
     for f in range(lz):
-        #print("f: ", f, " / ", lz-1)
-        #start_time = time.time()
-        filt_ind_array = np.array(filt_ind[f])
+        arg_list.append([f, filt[:,:,:,f], filt_ind[f], b[f], lx, ly])
         
-        filt_sorted = filt[filt_ind_array[:,0], filt_ind_array[:,1], filt_ind_array[:,2], f]
-        
-        for i in range(lx):
-            for j in range(ly):
-                im_sorted = im_padded[filt_ind_array[:,0]+i, filt_ind_array[:,1]+j, filt_ind_array[:,2]]
-                
-                ofmap[i,j,f], ws_cnt_, max_ind, max_val = mult3dsorted(im_sorted, filt_sorted, b[f])
+    pool = multiprocessing.Pool(processes=lz)
+    out_list = pool.map(conv3dkernel, arg_list)        
+    
+    for f in range(lz):    
+        ws_cnt = ws_cnt + out_list[f][1]
+        ofmap[:,:,f] = out_list[f][0]
 
-                ws_cnt = ws_cnt + ws_cnt_
-                maxVals[0][i,j] = max_ind
-                maxVals[1][i,j] = max_val        
-                maxVals[2][i,j] = ws_cnt_ 
-                
-        for i in range(0,lx,2):
-            for j in range(0,ly,2):
-                mp_cnt = mp_cnt + maxVals[0][i,j] + maxVals[0][i+1,j] + maxVals[0][i,j+1] + maxVals[0][i+1,j+1]
-                max_ind = np.argmax([maxVals[1][i,j],maxVals[1][i+1,j],maxVals[1][i,j+1],maxVals[1][i+1,j+1]])
-                #max_ind_2 = np.argmax([ofmap[i,j,f],ofmap[i+1,j,f],ofmap[i,j+1,f],ofmap[i+1,j+1,f]])
-                
-                
-                if max_ind == 0:
-                    mp_cnt = mp_cnt + maxVals[2][i,j] - maxVals[0][i,j]
-                elif max_ind == 1:
-                    mp_cnt = mp_cnt + maxVals[2][i+1,j] - maxVals[0][i+1,j]
-                elif max_ind == 2:
-                    mp_cnt = mp_cnt + maxVals[2][i,j+1] - maxVals[0][i,j+1]
-                else:
-                    mp_cnt = mp_cnt + maxVals[2][i+1,j+1] - maxVals[0][i+1,j+1]
-        
-        #print("--- %s seconds ---" % (time.time() - start_time))
-        
+    pool.close()
+    pool.join()
+
     print("--- %s seconds ---" % (time.time() - start_time))
     return ofmap, mac_cnt, ws_cnt, mp_cnt
 
@@ -224,10 +239,20 @@ def fcOutput(im,w,b):
     return out
     
 
-def fcSorted(im, w, b):
+def fcSorted(im, w, b, layer_name):
     start_time = time.time()
 
-    filt_ind = sortFCFilters(w, 0)
+    loadSortedIndex = True
+    indexFileName = '../sorted_indexes/filt_ind_' + layer_name + '.json'
+    if loadSortedIndex and os.path.exists(indexFileName):
+        print('Loading json file')
+        with open(indexFileName, 'r') as infile:
+            filt_ind = json.load(infile)
+    else:
+        filt_ind = sortFCFilters(w, 0)
+        print('Writing json file')
+        with open(indexFileName, 'w') as outfile:
+            json.dump(filt_ind, outfile)
     
     print('filter sorted.')
     print("--- %s seconds ---" % (time.time() - start_time))
