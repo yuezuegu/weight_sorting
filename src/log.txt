@@ -1,3 +1,4 @@
-Image name: /home/acy/Downloads/ILSVRC2012_img_val/ILSVRC2012_val_00011842.JPEG
-Layer: input_1
-Layer: block1_conv1
+/home/acy/.local/lib/python2.7/site-packages/h5py/__init__.py:36: FutureWarning: Conversion of the second argument of issubdtype from `float` to `np.floating` is deprecated. In future, it will be treated as `np.float64 == np.dtype(float).type`.
+  from ._conv import register_converters as _register_converters
+Using TensorFlow backend.
+2018-06-14 15:50:26.544747: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA

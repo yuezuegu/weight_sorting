@@ -26,14 +26,14 @@ def choose_subset(im_dir, no_imgs):
     return idx, [im_dir+l for l in sublist]
 
 
-def check_accuracy(prob, idx):
+def check_accuracy(prob, img_name):
     synset = [l.strip() for l in open('../data/synset.txt').readlines()]
 
     gt = [i for i in open('../data/ground_truth.txt').readlines()]
     
     img_names = [i for i in open('../data/image_names.txt').readlines()]
     
-    #idx = img_names.index(img_name+'\n')
+    idx = img_names.index(img_name+'\n')
     
     # print prob
     pred = np.argsort(prob)[::-1]
@@ -51,10 +51,10 @@ def check_accuracy(prob, idx):
         top5correct = False
         print('Top 5 NOT correct')
          
-    top1 = synset[pred[0]]
-    print(("Top1: ", top1, prob[pred[0]]))
-    top5 = [(synset[pred[i]], prob[pred[i]]) for i in range(5)]
-    print(("Top5: ", top5))
+#     top1 = synset[pred[0]]
+#     print(("Top1: ", top1, prob[pred[0]]))
+#     top5 = [(synset[pred[i]], prob[pred[i]]) for i in range(5)]
+#     print(("Top5: ", top5))
     
     return top1correct, top5correct
 
