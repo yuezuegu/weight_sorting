@@ -50,13 +50,11 @@ def check_accuracy(prob, idx):
     else:
         top5correct = False
         print('Top 5 NOT correct')
-        
-    # Get top1 label
-    #top1 = synset[pred[0]]
-    #print(("Top1: ", top1, prob[pred[0]]))
-    # Get top5 label
-    #top5 = [(synset[pred[i]], prob[pred[i]]) for i in range(5)]
-    #print(("Top5: ", top5))
+         
+    top1 = synset[pred[0]]
+    print(("Top1: ", top1, prob[pred[0]]))
+    top5 = [(synset[pred[i]], prob[pred[i]]) for i in range(5)]
+    print(("Top5: ", top5))
     
     return top1correct, top5correct
 
@@ -135,7 +133,7 @@ def conv3dsorted(im, filt, b, layer_name, perc_procastinate):
     
     ofmap = np.zeros((lx,ly,lz))
     
-    loadSortedIndex = True
+    loadSortedIndex = False
     indexFileName = '../sorted_indexes/filt_ind_' + layer_name + '.json'
     if loadSortedIndex and os.path.exists(indexFileName):
         print('Loading json file')
@@ -236,7 +234,7 @@ def fc(im,w,b):
 def fcOutput(im,w,b):
     out = np.matmul(im,  w) + b
     out = softmax(out)
-    return out
+    return [out]
     
 
 def fcSorted(im, w, b, layer_name):

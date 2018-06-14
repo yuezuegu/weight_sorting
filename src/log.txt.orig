@@ -1,0 +1,241 @@
+<<<<<<< HEAD
+=======
+Image name: /home/parsa/ahmet/ILSVRC/ILSVRC2012_val_00011842.JPEG
+Layer: input_1
+Layer: block1_conv1
+Layer: block1_conv2
+# of mac: 1849688064 # of ws: 1683034730 , % of skipped: 0.0900980750449
+Layer: block1_pool
+Layer: block2_conv1
+# of mac: 924844032 # of ws: 826614866 , % of skipped: 0.106211601742
+Layer: block2_conv2
+# of mac: 1849688064 # of ws: 1621543913 , % of skipped: 0.123341959891
+Layer: block2_pool
+Layer: block3_conv1
+# of mac: 924844032 # of ws: 825016176 , % of skipped: 0.107940206722
+Layer: block3_conv2
+# of mac: 1849688064 # of ws: 1631691411 , % of skipped: 0.11785590081
+Layer: block3_conv3
+# of mac: 1849688064 # of ws: 1450036347 , % of skipped: 0.216064386627
+Layer: block3_pool
+Layer: block4_conv1
+# of mac: 924844032 # of ws: 765182552 , % of skipped: 0.172636114281
+Layer: block4_conv2
+# of mac: 1849688064 # of ws: 1510930906 , % of skipped: 0.183142857757
+Layer: block4_conv3
+# of mac: 1849688064 # of ws: 1297868873 , % of skipped: 0.298330946574
+Layer: block4_pool
+Layer: block5_conv1
+# of mac: 462422016 # of ws: 359914293 , % of skipped: 0.221675697638
+Layer: block5_conv2
+# of mac: 462422016 # of ws: 355027311 , % of skipped: 0.232243927158
+Layer: block5_conv3
+# of mac: 462422016 # of ws: 295729484 , % of skipped: 0.360477066905
+Layer: block5_pool
+Layer: flatten
+Layer: fc1
+# of mac: 102760448 # of ws: 84826658 , % of skipped: 0.174520356315
+Layer: fc2
+# of mac: 16777216 # of ws: 14003404 , % of skipped: 0.165332078934
+Layer: predictions
+Final max error: 5.970839849211984e-07
+Total # of mac: 15379464192 total # of ws: 12721420924 , total % of skipped: 0.172830680888
+Total elapsed time: 534.282564163
+Top1: False Top5: False
+Image name: /home/parsa/ahmet/ILSVRC/ILSVRC2012_val_00019603.JPEG
+Layer: input_1
+Layer: block1_conv1
+Layer: block1_conv2
+# of mac: 1849688064 # of ws: 1677353394 , % of skipped: 0.0931695853772
+Layer: block1_pool
+Layer: block2_conv1
+# of mac: 924844032 # of ws: 827738282 , % of skipped: 0.104996893141
+Layer: block2_conv2
+# of mac: 1849688064 # of ws: 1593266471 , % of skipped: 0.138629641392
+Layer: block2_pool
+Layer: block3_conv1
+# of mac: 924844032 # of ws: 814281230 , % of skipped: 0.119547510904
+Layer: block3_conv2
+# of mac: 1849688064 # of ws: 1623978752 , % of skipped: 0.122025608746
+Layer: block3_conv3
+# of mac: 1849688064 # of ws: 1493966886 , % of skipped: 0.192314144705
+Layer: block3_pool
+Layer: block4_conv1
+# of mac: 924844032 # of ws: 761764561 , % of skipped: 0.176331862841
+Layer: block4_conv2
+# of mac: 1849688064 # of ws: 1509238676 , % of skipped: 0.184057730936
+Layer: block4_conv3
+# of mac: 1849688064 # of ws: 1353421480 , % of skipped: 0.268297446288
+Layer: block4_pool
+Layer: block5_conv1
+# of mac: 462422016 # of ws: 361774877 , % of skipped: 0.217652134885
+Layer: block5_conv2
+# of mac: 462422016 # of ws: 354566767 , % of skipped: 0.233239865898
+Layer: block5_conv3
+# of mac: 462422016 # of ws: 312886108 , % of skipped: 0.323375407801
+Layer: block5_pool
+Layer: flatten
+Layer: fc1
+# of mac: 102760448 # of ws: 77540017 , % of skipped: 0.245429360137
+Layer: fc2
+# of mac: 16777216 # of ws: 12166673 , % of skipped: 0.274809777737
+Layer: predictions
+Final max error: 2.1424263507707764e-07
+Total # of mac: 15379464192 total # of ws: 12773944174 , total % of skipped: 0.16941552615
+Total elapsed time: 182.667078972
+Top1: False Top5: False
+Image name: /home/parsa/ahmet/ILSVRC/ILSVRC2012_val_00045520.JPEG
+Layer: input_1
+Layer: block1_conv1
+Layer: block1_conv2
+# of mac: 1849688064 # of ws: 1648139421 , % of skipped: 0.108963585224
+Layer: block1_pool
+Layer: block2_conv1
+# of mac: 924844032 # of ws: 816527041 , % of skipped: 0.117119197672
+Layer: block2_conv2
+# of mac: 1849688064 # of ws: 1572448601 , % of skipped: 0.149884441813
+Layer: block2_pool
+Layer: block3_conv1
+# of mac: 924844032 # of ws: 804420289 , % of skipped: 0.13020978547
+Layer: block3_conv2
+# of mac: 1849688064 # of ws: 1611517843 , % of skipped: 0.128762371145
+Layer: block3_conv3
+# of mac: 1849688064 # of ws: 1478795652 , % of skipped: 0.200516194713
+Layer: block3_pool
+Layer: block4_conv1
+# of mac: 924844032 # of ws: 764387495 , % of skipped: 0.173495780313
+Layer: block4_conv2
+# of mac: 1849688064 # of ws: 1498792619 , % of skipped: 0.189705200476
+Layer: block4_conv3
+# of mac: 1849688064 # of ws: 1336043984 , % of skipped: 0.277692271468
+Layer: block4_pool
+Layer: block5_conv1
+# of mac: 462422016 # of ws: 363185555 , % of skipped: 0.214601505911
+Layer: block5_conv2
+# of mac: 462422016 # of ws: 356178681 , % of skipped: 0.229754058682
+Layer: block5_conv3
+# of mac: 462422016 # of ws: 311452606 , % of skipped: 0.326475394286
+Layer: block5_pool
+Layer: flatten
+Layer: fc1
+# of mac: 102760448 # of ws: 82241997 , % of skipped: 0.199672650318
+Layer: fc2
+# of mac: 16777216 # of ws: 12781722 , % of skipped: 0.238150000572
+Layer: predictions
+Final max error: 3.13914929606085e-08
+Total # of mac: 15379464192 total # of ws: 12656913506 , total % of skipped: 0.177025067454
+Total elapsed time: 340.9907341
+Top1: False Top5: False
+Image name: /home/parsa/ahmet/ILSVRC/ILSVRC2012_val_00025748.JPEG
+Layer: input_1
+Layer: block1_conv1
+Layer: block1_conv2
+# of mac: 1849688064 # of ws: 1655436780 , % of skipped: 0.105018401633
+Layer: block1_pool
+Layer: block2_conv1
+# of mac: 924844032 # of ws: 817443252 , % of skipped: 0.116128532254
+Layer: block2_conv2
+# of mac: 1849688064 # of ws: 1579298269 , % of skipped: 0.146181294167
+Layer: block2_pool
+Layer: block3_conv1
+# of mac: 924844032 # of ws: 809875511 , % of skipped: 0.124311253597
+Layer: block3_conv2
+# of mac: 1849688064 # of ws: 1608516843 , % of skipped: 0.130384806873
+Layer: block3_conv3
+# of mac: 1849688064 # of ws: 1484616685 , % of skipped: 0.197369159755
+Layer: block3_pool
+Layer: block4_conv1
+# of mac: 924844032 # of ws: 765818150 , % of skipped: 0.171948865428
+Layer: block4_conv2
+# of mac: 1849688064 # of ws: 1500558742 , % of skipped: 0.188750378399
+Layer: block4_conv3
+# of mac: 1849688064 # of ws: 1335780927 , % of skipped: 0.277834488421
+Layer: block4_pool
+Layer: block5_conv1
+# of mac: 462422016 # of ws: 363574386 , % of skipped: 0.213760648455
+Layer: block5_conv2
+# of mac: 462422016 # of ws: 347458551 , % of skipped: 0.248611573459
+Layer: block5_conv3
+# of mac: 462422016 # of ws: 284274889 , % of skipped: 0.385247935514
+Layer: block5_pool
+Layer: flatten
+Layer: fc1
+# of mac: 102760448 # of ws: 78675885 , % of skipped: 0.234375807704
+Layer: fc2
+# of mac: 16777216 # of ws: 13599466 , % of skipped: 0.189408659935
+Layer: predictions
+Final max error: 8.910529987193883e-07
+Total # of mac: 15379464192 total # of ws: 12644928336 , total % of skipped: 0.177804364434
+Total elapsed time: 240.092019081
+Top1: False Top5: False
+Image name: /home/parsa/ahmet/ILSVRC/ILSVRC2012_val_00042643.JPEG
+Layer: input_1
+Layer: block1_conv1
+Layer: block1_conv2
+# of mac: 1849688064 # of ws: 1680636071 , % of skipped: 0.0913948661346
+Layer: block1_pool
+Layer: block2_conv1
+# of mac: 924844032 # of ws: 825317559 , % of skipped: 0.107614332316
+Layer: block2_conv2
+# of mac: 1849688064 # of ws: 1625793988 , % of skipped: 0.121044234624
+Layer: block2_pool
+Layer: block3_conv1
+# of mac: 924844032 # of ws: 829591261 , % of skipped: 0.102993334772
+Layer: block3_conv2
+# of mac: 1849688064 # of ws: 1634786639 , % of skipped: 0.116182522439
+Layer: block3_conv3
+# of mac: 1849688064 # of ws: 1460769444 , % of skipped: 0.210261734164
+Layer: block3_pool
+Layer: block4_conv1
+# of mac: 924844032 # of ws: 770874414 , % of skipped: 0.166481712238
+Layer: block4_conv2
+# of mac: 1849688064 # of ws: 1510792245 , % of skipped: 0.183217822289
+Layer: block4_conv3
+# of mac: 1849688064 # of ws: 1314325759 , % of skipped: 0.289433832342
+Layer: block4_pool
+Layer: block5_conv1
+# of mac: 462422016 # of ws: 360259359 , % of skipped: 0.220929483167
+Layer: block5_conv2
+# of mac: 462422016 # of ws: 358892673 , % of skipped: 0.223884978262
+Layer: block5_conv3
+# of mac: 462422016 # of ws: 296739554 , % of skipped: 0.358292763466
+Layer: block5_pool
+Layer: flatten
+Layer: fc1
+# of mac: 102760448 # of ws: 86260620 , % of skipped: 0.160565940701
+Layer: fc2
+# of mac: 16777216 # of ws: 14503370 , % of skipped: 0.135531783104
+Layer: predictions
+Final max error: 2.1881102252319096e-07
+Total # of mac: 15379464192 total # of ws: 12769542956 , total % of skipped: 0.16970170114
+Total elapsed time: 369.131480932
+Top1: False Top5: False
+Image name: /home/parsa/ahmet/ILSVRC/ILSVRC2012_val_00031903.JPEG
+Layer: input_1
+Layer: block1_conv1
+Layer: block1_conv2
+# of mac: 1849688064 # of ws: 1691846882 , % of skipped: 0.0853339463405
+Layer: block1_pool
+Layer: block2_conv1
+# of mac: 924844032 # of ws: 830255967 , % of skipped: 0.102274612505
+Layer: block2_conv2
+# of mac: 1849688064 # of ws: 1595213718 , % of skipped: 0.137576897939
+Layer: block2_pool
+Layer: block3_conv1
+# of mac: 924844032 # of ws: 815151824 , % of skipped: 0.118606169478
+Layer: block3_conv2
+# of mac: 1849688064 # of ws: 1618046808 , % of skipped: 0.125232605707
+Layer: block3_conv3
+# of mac: 1849688064 # of ws: 1471648947 , % of skipped: 0.204379929977
+Layer: block3_pool
+Layer: block4_conv1
+# of mac: 924844032 # of ws: 759281379 , % of skipped: 0.179016836646
+Layer: block4_conv2
+# of mac: 1849688064 # of ws: 1504264580 , % of skipped: 0.186746884906
+Layer: block4_conv3
+# of mac: 1849688064 # of ws: 1306790899 , % of skipped: 0.293507416502
+Layer: block4_pool
+Layer: block5_conv1
+# of mac: 462422016 # of ws: 359234771 , % of skipped: 0.223145182171
+Layer: block5_conv2
+>>>>>>> b5feb85a103286de0129d32ae2eb4aee491f49d2
