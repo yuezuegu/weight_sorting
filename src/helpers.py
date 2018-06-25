@@ -76,9 +76,6 @@ def mult3dsorted(im_sorted, filt_sorted, b):
         midsum = 0
     
     
-    
-
-    
     return midsum, ws_cnt, max_ind, max_val
 
 def conv3d(im, filt, b):
@@ -109,16 +106,45 @@ def conv3dkernel(args):
     filt_sorted = filt[filt_ind_array[:,0], filt_ind_array[:,1], filt_ind_array[:,2]]
     
     ofmap_slice = np.zeros((lx,ly))
+    ofmap_pp_slice = np.zeros((lx,ly))
+    maxVals = [np.zeros((lx, ly)), np.zeros((lx, ly)), np.zeros((lx, ly))]
     
     ws_cnt = 0
+    mp_cnt = 0
     for i in range(lx):
         for j in range(ly):
             im_sorted = im_padded[filt_ind_array[:,0]+i, filt_ind_array[:,1]+j, filt_ind_array[:,2]]
             
-            ofmap_slice[i,j], ws_cnt_, _,_ = mult3dsorted(im_sorted, filt_sorted, b)
+            ofmap_slice[i,j], ws_cnt_, max_ind, max_val = mult3dsorted(im_sorted, filt_sorted, b)
             ws_cnt = ws_cnt + ws_cnt_
+            maxVals[0][i,j] = max_ind
+            maxVals[1][i,j] = max_val        
+            maxVals[2][i,j] = ws_cnt_ 
             
-    return ofmap_slice, ws_cnt
+            
+    for i in range(0,lx,2):
+        for j in range(0,ly,2):
+            mp_cnt = mp_cnt + maxVals[0][i,j] + maxVals[0][i+1,j] + maxVals[0][i,j+1] + maxVals[0][i+1,j+1]
+            max_ind = np.argmax([maxVals[1][i,j],maxVals[1][i+1,j],maxVals[1][i,j+1],maxVals[1][i+1,j+1]])
+            #max_ind_2 = np.argmax([ofmap[i,j,f],ofmap[i+1,j,f],ofmap[i,j+1,f],ofmap[i+1,j+1,f]])
+            
+            ofmap_pp_slice[i,j] = max([maxVals[1][i,j],maxVals[1][i+1,j],maxVals[1][i,j+1],maxVals[1][i+1,j+1]])
+            ofmap_pp_slice[i+1,j] = max([maxVals[1][i,j],maxVals[1][i+1,j],maxVals[1][i,j+1],maxVals[1][i+1,j+1]])
+            ofmap_pp_slice[i,j+1] = max([maxVals[1][i,j],maxVals[1][i+1,j],maxVals[1][i,j+1],maxVals[1][i+1,j+1]])
+            ofmap_pp_slice[i+1,j+1] = max([maxVals[1][i,j],maxVals[1][i+1,j],maxVals[1][i,j+1],maxVals[1][i+1,j+1]])
+            
+            
+            if max_ind == 0:
+                mp_cnt = mp_cnt + maxVals[2][i,j] - maxVals[0][i,j]
+            elif max_ind == 1:
+                mp_cnt = mp_cnt + maxVals[2][i+1,j] - maxVals[0][i+1,j]
+            elif max_ind == 2:
+                mp_cnt = mp_cnt + maxVals[2][i,j+1] - maxVals[0][i,j+1]
+            else:
+                mp_cnt = mp_cnt + maxVals[2][i+1,j+1] - maxVals[0][i+1,j+1]
+
+
+    return ofmap_slice, ws_cnt, ofmap_pp_slice, mp_cnt
     
 def conv3dsorted(im, filt, b, layer_name, perc_procastinate):
     start_time = time.time()
@@ -132,6 +158,7 @@ def conv3dsorted(im, filt, b, layer_name, perc_procastinate):
     im_padded = np.pad(im, ((pad_size, pad_size), (pad_size, pad_size), (0, 0)), mode='constant', constant_values=(0, 0))
     
     ofmap = np.zeros((lx,ly,lz))
+    ofmap_pp = np.zeros((lx,ly,lz))
     
     loadSortedIndex = False
     indexFileName = '../sorted_indexes/filt_ind_' + layer_name + '.json'
@@ -148,7 +175,6 @@ def conv3dsorted(im, filt, b, layer_name, perc_procastinate):
     ws_cnt = 0
     mac_cnt = filt.shape[0]*filt.shape[1]*filt.shape[2]*im.shape[0]*im.shape[1]*filt.shape[3]
     
-    maxVals = [np.zeros((lx, ly)), np.zeros((lx, ly)), np.zeros((lx, ly))]
     mp_cnt = 0
     
     arg_list = []
@@ -161,12 +187,15 @@ def conv3dsorted(im, filt, b, layer_name, perc_procastinate):
     for f in range(lz):    
         ws_cnt = ws_cnt + out_list[f][1]
         ofmap[:,:,f] = out_list[f][0]
+        
+        ofmap_pp[:,:,f] = out_list[f][2]
+        mp_cnt = mp_cnt + out_list[f][3]
 
     pool.close()
     pool.join()
 
     print("--- %s seconds ---" % (time.time() - start_time))
-    return ofmap, mac_cnt, ws_cnt, mp_cnt
+    return ofmap, mac_cnt, ws_cnt, ofmap_pp, mp_cnt
 
 def sortConvFilters(filt, perc_procrastinate):
     dx = filt.shape[0]
