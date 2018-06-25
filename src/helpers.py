@@ -126,24 +126,26 @@ def conv3dkernel(args):
         for j in range(0,ly,2):
             mp_cnt = mp_cnt + maxVals[0][i,j] + maxVals[0][i+1,j] + maxVals[0][i,j+1] + maxVals[0][i+1,j+1]
             max_ind = np.argmax([maxVals[1][i,j],maxVals[1][i+1,j],maxVals[1][i,j+1],maxVals[1][i+1,j+1]])
-            #max_ind_2 = np.argmax([ofmap[i,j,f],ofmap[i+1,j,f],ofmap[i,j+1,f],ofmap[i+1,j+1,f]])
-            
-            ofmap_pp_slice[i,j] = max([maxVals[1][i,j],maxVals[1][i+1,j],maxVals[1][i,j+1],maxVals[1][i+1,j+1]])
-            ofmap_pp_slice[i+1,j] = max([maxVals[1][i,j],maxVals[1][i+1,j],maxVals[1][i,j+1],maxVals[1][i+1,j+1]])
-            ofmap_pp_slice[i,j+1] = max([maxVals[1][i,j],maxVals[1][i+1,j],maxVals[1][i,j+1],maxVals[1][i+1,j+1]])
-            ofmap_pp_slice[i+1,j+1] = max([maxVals[1][i,j],maxVals[1][i+1,j],maxVals[1][i,j+1],maxVals[1][i+1,j+1]])
-            
+            #max_ind_2 = np.argmax([ofmap[i,j,f],ofmap[i+1,j,f],ofmap[i,j+1,f],ofmap[i+1,j+1,f]])          
             
             if max_ind == 0:
                 mp_cnt = mp_cnt + maxVals[2][i,j] - maxVals[0][i,j]
+                max_pp = ofmap_slice[i,j]
             elif max_ind == 1:
                 mp_cnt = mp_cnt + maxVals[2][i+1,j] - maxVals[0][i+1,j]
+                max_pp = ofmap_slice[i+1,j]
             elif max_ind == 2:
                 mp_cnt = mp_cnt + maxVals[2][i,j+1] - maxVals[0][i,j+1]
+                max_pp = ofmap_slice[i,j+1]
             else:
                 mp_cnt = mp_cnt + maxVals[2][i+1,j+1] - maxVals[0][i+1,j+1]
+                max_pp = ofmap_slice[i+1,j+1]
 
-
+            ofmap_pp_slice[i,j] = max_pp
+            ofmap_pp_slice[i+1,j] = max_pp
+            ofmap_pp_slice[i,j+1] = max_pp
+            ofmap_pp_slice[i+1,j+1] = max_pp
+            
     return ofmap_slice, ws_cnt, ofmap_pp_slice, mp_cnt
     
 def conv3dsorted(im, filt, b, layer_name, perc_procastinate):
